@@ -1,0 +1,35 @@
+# Example only. Confirm the entity IDs created by your Home Assistant instance.
+type: sections
+max_columns: 3
+sections:
+  - type: grid
+    cards:
+      - type: heading
+        heading: Pump status
+      - type: gauge
+        entity: sensor.pentek_intellidrive_pid50_pressure
+        name: Pressure
+        min: 0
+        max: 100
+        needle: true
+      - type: entities
+        entities:
+          - binary_sensor.pentek_intellidrive_pid50_running
+          - binary_sensor.pentek_intellidrive_pid50_sleeping
+          - binary_sensor.pentek_intellidrive_pid50_fault_active
+          - sensor.pentek_intellidrive_pid50_operation_state
+          - sensor.pentek_intellidrive_pid50_run_mode
+          - sensor.pentek_intellidrive_pid50_fault_code
+  - type: grid
+    cards:
+      - type: heading
+        heading: Electrical
+      - type: entities
+        entities:
+          - sensor.pentek_intellidrive_pid50_frequency
+          - sensor.pentek_intellidrive_pid50_power
+          - sensor.pentek_intellidrive_pid50_phase_a_current
+          - sensor.pentek_intellidrive_pid50_phase_b_current
+          - sensor.pentek_intellidrive_pid50_phase_c_current
+          - sensor.pentek_intellidrive_pid50_supply_voltage
+          - sensor.pentek_intellidrive_pid50_igbt_temperature

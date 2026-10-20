@@ -1,0 +1,107 @@
+{
+  "title": "Pentek IntelliDrive",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to a Pentek IntelliDrive PID50",
+        "description": "Enter the Modbus TCP gateway used by the drive. This release is read-only.",
+        "data": {
+          "host": "Gateway host",
+          "port": "Gateway port",
+          "unit_id": "Modbus unit ID",
+          "scan_interval": "Polling interval"
+        },
+        "data_description": {
+          "host": "IP address or hostname of the RS-485 to Ethernet gateway.",
+          "port": "Modbus TCP port, normally 502.",
+          "unit_id": "The PID50 Modbus slave address, normally 2.",
+          "scan_interval": "Seconds between live-data updates. Use at least 15 seconds unless the gateway is known to tolerate faster polling."
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Could not read the PID50 pressure register. Check the gateway, unit ID, wiring, and ensure another client is not interfering.",
+      "unknown": "Unexpected error"
+    },
+    "abort": {
+      "already_configured": "This PID50 gateway and unit ID are already configured."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Pentek IntelliDrive options",
+        "data": {
+          "scan_interval": "Polling interval"
+        },
+        "data_description": {
+          "scan_interval": "Seconds between live-data updates."
+        }
+      }
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "running": {"name": "Running"},
+      "sleeping": {"name": "Sleeping"},
+      "fault_active": {"name": "Fault active"}
+    },
+    "sensor": {
+      "pressure": {"name": "Pressure"},
+      "pressure_setpoint": {"name": "Pressure setpoint"},
+      "transducer_max": {"name": "Transducer maximum"},
+      "setpoint_external": {"name": "External setpoint"},
+      "setpoint_overpressure": {"name": "Overpressure setpoint"},
+      "operation_state": {
+        "name": "Operation state",
+        "state": {"stopped": "Stopped", "initializing": "Initializing", "target_pressure": "Target pressure", "boosting": "Boosting", "sleeping": "Sleeping", "maintaining": "Maintaining", "stopping": "Stopping", "fault": "Fault", "fault_recovery": "Fault recovery", "unknown": "Unknown"}
+      },
+      "run_mode": {
+        "name": "Run mode",
+        "state": {"stop": "Stop", "pump_out": "Pump out", "auto": "Auto", "unknown": "Unknown"}
+      },
+      "fault_code": {"name": "Fault code"},
+      "p_gain": {"name": "P gain"},
+      "t_integral": {"name": "Integral time"},
+      "t_derivative": {"name": "Derivative time"},
+      "derivative_limit": {"name": "Derivative limit"},
+      "frequency_max": {"name": "Maximum frequency"},
+      "frequency_min": {"name": "Minimum frequency"},
+      "pumpout_speed": {"name": "Pump-out speed"},
+      "io_input_1_active": {"name": "Input 1 active", "state": {"disabled": "Disabled", "enabled": "Enabled", "unknown": "Unknown"}},
+      "io_input_2_active": {"name": "Input 2 active", "state": {"disabled": "Disabled", "enabled": "Enabled", "unknown": "Unknown"}},
+      "io_output_active": {"name": "Output active", "state": {"disabled": "Disabled", "enabled": "Enabled", "unknown": "Unknown"}},
+      "io_input_1_function": {"name": "Input 1 function", "state": {"unused": "Unused", "run_enable": "Run enable", "external_fault": "External fault", "external_setpoint": "External setpoint", "unknown": "Unknown"}},
+      "io_input_2_function": {"name": "Input 2 function", "state": {"unused": "Unused", "run_enable": "Run enable", "external_fault": "External fault", "external_setpoint": "External setpoint", "unknown": "Unknown"}},
+      "io_output_function": {"name": "Output function", "state": {"unused": "Unused", "running": "Running", "fault": "Fault", "unknown": "Unknown"}},
+      "dry_run_detection_time": {"name": "Dry-run detection time"},
+      "dry_run_reset_limit": {"name": "Dry-run reset limit"},
+      "dry_run_reset_delay": {"name": "Dry-run reset delay"},
+      "dry_run_fill_time": {"name": "Dry-run fill time"},
+      "dry_run_sensitivity": {"name": "Dry-run sensitivity"},
+      "sleep_wakeup_diff": {"name": "Sleep wake-up differential"},
+      "sleep_wakeup_delay": {"name": "Sleep wake-up delay"},
+      "sleep_boost_delay": {"name": "Sleep boost delay"},
+      "sleep_boost_diff": {"name": "Sleep boost differential"},
+      "pipe_break_enabled": {"name": "Pipe-break protection", "state": {"disabled": "Disabled", "enabled": "Enabled", "unknown": "Unknown"}},
+      "pipe_break_hours": {"name": "Pipe-break hours"},
+      "pressure_unit": {"name": "Pressure unit", "state": {"psi": "PSI", "kpa": "kPa", "unknown": "Unknown"}},
+      "frequency": {"name": "Frequency"},
+      "actual_speed": {"name": "Actual speed"},
+      "power": {"name": "Power"},
+      "phase_a_current": {"name": "Phase A current"},
+      "phase_b_current": {"name": "Phase B current"},
+      "phase_c_current": {"name": "Phase C current"},
+      "phase_voltage": {"name": "Phase voltage"},
+      "supply_voltage": {"name": "Supply voltage"},
+      "igbt_temperature": {"name": "IGBT temperature"},
+      "motor_sf_amps": {"name": "Motor service-factor amps"},
+      "motor_type": {"name": "Motor type", "state": {"three_phase": "3-phase", "single_phase_two_wire": "1-phase 2-wire", "single_phase_three_wire": "1-phase 3-wire", "unknown": "Unknown"}},
+      "motor_above_ground": {"name": "Motor location", "state": {"submersible": "Submersible", "above_ground": "Above ground", "unknown": "Unknown"}},
+      "ramp_up_time": {"name": "Ramp-up time"},
+      "ramp_down_time": {"name": "Ramp-down time"},
+      "ground_fault_limit": {"name": "Ground-fault limit"},
+      "unit_number": {"name": "Unit number"}
+    }
+  }
+}

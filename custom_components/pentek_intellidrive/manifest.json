@@ -1,6 +1,7 @@
 {
   "domain": "pentek_intellidrive",
   "name": "Pentek IntelliDrive",
+  "categories": ["water"],
   "codeowners": ["@endoftheline818"],
   "config_flow": true,
   "documentation": "https://github.com/EndOfTheLine-HA/ha-pentek-intellidrive",

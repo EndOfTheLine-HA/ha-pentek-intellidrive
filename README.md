@@ -9,7 +9,7 @@ write commands, switches, numbers, or services that can change pump behavior.
 ## Features
 
 - UI configuration; no YAML is required.
-- 49 verified holding-register sensors.
+- 49 holding-register sensors and three derived binary sensors.
 - Live pressure, setpoint, frequency, power, current, voltage, temperature,
   operating state, run mode, and fault code.
 - Diagnostic views of PID tuning, dry-run protection, sleep/boost behavior,
@@ -43,25 +43,19 @@ Other IntelliDrive models or register-map revisions are not yet confirmed.
    **Pentek IntelliDrive**.
 6. Enter the gateway host, port, unit ID, and polling interval.
 
+Home Assistant **2026.10.2 or newer** is required. HACS custom-repository
+installation is supported; inclusion in the default HACS catalog is separate.
+
 ## Migrating from Home Assistant Modbus YAML
 
 Do not leave the old PID50 Modbus YAML polling the same gateway while this
 integration is active. Some serial gateways can deliver a response to the wrong
 TCP client when two clients poll concurrently.
 
-Recommended migration:
-
-1. Back up the current Home Assistant configuration and entity customizations.
-2. Record the entity IDs used by dashboards, automations, statistics, and energy
-   sensors.
-3. Disable the old PID50 Modbus YAML and restart Home Assistant.
-4. Add this integration and confirm its readings against the drive display.
-5. Rename the new entities or update consumers deliberately.
-6. Keep the old YAML backup until the new entities have been physically
-   validated through stopped, running, sleeping, and fault-free operation.
-
-The integration does not automatically migrate YAML-created entity registry
-entries.
+Follow [MIGRATION.md](MIGRATION.md) for the backup, single-poller cutover,
+entity mapping, enum-state changes, helper/history preservation, and rollback
+checklist. Migration is manual: old entity IDs, raw sensor history, and
+statistics are not automatically transferred.
 
 ## Polling behavior
 
@@ -74,9 +68,17 @@ the gateway is also serving another diagnostic client.
 
 ## Entity availability
 
-Frequently changing entities are enabled by default. Slow-changing settings are
-created as diagnostic entities and disabled by default; enable them from the
-device page when needed. All 49 register definitions remain available.
+There are 52 native entities: 49 sensors and three binary sensors. Of these,
+17 are enabled by default and 35 diagnostic sensors are disabled by default.
+Enable individual diagnostics from the device page when needed, particularly
+when migrating an existing dashboard.
+
+Enum sensors expose named states such as `sleeping` and `fault_recovery`, plus
+the numeric source in a `raw_value` attribute. A nonzero fault code can be
+historical; use **Fault active** to detect an active fault or fault recovery.
+
+An [example dashboard](examples/dashboard.yaml) is included. Its entity IDs are
+placeholders; replace them with the IDs created in your installation.
 
 ## Safety
 
@@ -88,16 +90,15 @@ Version 0.1.0 is read-only. Future write support, if added, must be explicitly
 enabled and must include range validation, confirmation, read-back verification,
 and clear documentation of controller-specific risks.
 
-## Development status
+## Release status
 
-- Register map: derived from a working 49-entity Home Assistant installation and
-  direct read tools.
-- Automated validation: protocol decoding, package structure, Ruff, HACS, and
-  Hassfest workflows are included.
-- Physical validation of the packaged custom integration: still required before
-  a production migration.
+Version 0.1.0 is an initial, read-only release. Automated protocol, packaging,
+migration, and Home Assistant lifecycle tests cover the supported behavior.
 
-See [AUDIT.md](AUDIT.md) for provenance and validation boundaries.
+This is not validation of every register against the controller display, every
+operating mode, real fault events, long-term gateway recovery, or other hardware.
+No controller settings are written. See [AUDIT.md](AUDIT.md) for evidence and remaining validation limits,
+and the [v0.1.0 release notes](docs/releases/v0.1.0.md) for the release scope.
 
 ## License
 

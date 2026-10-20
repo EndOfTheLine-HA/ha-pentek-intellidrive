@@ -1,4 +1,7 @@
 # Example only. Confirm the entity IDs created by your Home Assistant instance.
+# Replace every example ID with the matching entity from the integration device.
+# Enable any disabled diagnostic entities used by your dashboard; see MIGRATION.md.
+# The gauge range below is illustrative, not a safe operating-pressure limit.
 type: sections
 max_columns: 3
 sections:

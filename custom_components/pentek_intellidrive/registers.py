@@ -477,3 +477,23 @@ def decode_registers(words: dict[int, int]) -> dict[str, int | float]:
             except ValueError:
                 continue
     return result
+
+
+def merge_registers(
+    previous: dict[str, int | float], words: dict[int, int]
+) -> dict[str, int | float]:
+    """Replace every value whose registers were read this cycle.
+
+    A value whose words arrived but could not be decoded (for example a
+    non-finite float) is dropped rather than left at its previous reading, so
+    its entity goes unavailable instead of showing a stale value as current.
+    Values from blocks not read this cycle are kept.
+    """
+    read = {
+        register.key
+        for register in REGISTERS
+        if all(register.address + offset in words for offset in range(register.words))
+    }
+    merged = {key: value for key, value in previous.items() if key not in read}
+    merged.update(decode_registers(words))
+    return merged

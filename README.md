@@ -104,7 +104,7 @@ This project is not affiliated with Pentair or Pentek. It is community software,
 not a safety controller. Home Assistant must never be the only protection for
 over-pressure, dry-run, electrical, or motor faults.
 
-Version 0.1.0 is read-only. Future write support, if added, must be explicitly
+Versions 0.1.x are read-only. Future write support, if added, must be explicitly
 enabled and must include range validation, confirmation, read-back verification,
 and clear documentation of controller-specific risks.
 

@@ -12,6 +12,7 @@ from custom_components.pentek_intellidrive.registers import (
     REGISTERS,
     SLOW_BLOCKS,
     decode_registers,
+    merge_registers,
 )
 
 
@@ -56,6 +57,15 @@ def test_partial_values_are_not_decoded() -> None:
 def test_non_finite_float_is_not_exposed() -> None:
     data = decode_registers({5145: 0x7FC0, 5146: 0x0000})
     assert "frequency" not in data
+
+
+def test_undecodable_value_is_dropped_not_left_stale() -> None:
+    previous = {"frequency": 57.2, "pressure": 50.0, "unit_number": 2}
+    words = {221: 414, 5145: 0x7FC0, 5146: 0x0000}  # pressure ok, frequency NaN
+    data = merge_registers(previous, words)
+    assert data["pressure"] == 60.0
+    assert "frequency" not in data  # read this cycle but invalid: unavailable
+    assert data["unit_number"] == 2  # not read this cycle: kept
 
 
 def test_latched_fault_code_does_not_mean_active_fault() -> None:

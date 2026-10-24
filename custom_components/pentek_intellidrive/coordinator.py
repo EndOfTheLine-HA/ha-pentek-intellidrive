@@ -12,7 +12,7 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, Upda
 
 from .api import PentekConnectionError, PentekModbusClient
 from .const import DOMAIN, SLOW_REFRESH_SECONDS
-from .registers import FAST_BLOCKS, SLOW_BLOCKS, decode_registers
+from .registers import FAST_BLOCKS, SLOW_BLOCKS, merge_registers
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -47,8 +47,7 @@ class PentekCoordinator(DataUpdateCoordinator[dict[str, int | float]]):
         except PentekConnectionError as err:
             raise UpdateFailed(f"PID50 communication failed: {err}") from err
 
-        data = dict(self.data or {})
-        data.update(decode_registers(fast_words))
+        data = merge_registers(self.data or {}, fast_words)
 
         now = monotonic()
         if (
@@ -66,7 +65,7 @@ class PentekCoordinator(DataUpdateCoordinator[dict[str, int | float]]):
                 self.last_slow_error = str(err)
                 _LOGGER.warning("Unable to refresh static PID50 registers: %s", err)
             else:
-                data.update(decode_registers(slow_words))
+                data = merge_registers(data, slow_words)
                 self.last_slow_error = None
 
         return data

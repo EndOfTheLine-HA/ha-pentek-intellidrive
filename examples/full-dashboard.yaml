@@ -1,0 +1,415 @@
+# Full dashboard example from a validated PID50 installation.
+# Entity IDs are illustrative. Replace them with the IDs created in your system.
+# Enable the disabled-by-default diagnostic entities used below before importing.
+#
+# This view also references optional user-created helper sensors:
+#   sensor.pid50_transducer_percent
+#   sensor.well_pump_estimated_gpm
+#   sensor.pid50_pump_status
+#   sensor.pid50_daily_runtime
+#   sensor.pid50_pump_energy
+#   sensor.pid50_pump_energy_daily
+#   sensor.pid50_pump_energy_monthly
+#   sensor.pid50_pressure_deviation
+# Remove those cards/rows or create equivalent helpers locally.
+#
+# Gauge ranges and severity colors are illustrative presentation choices, not
+# safe operating limits. Preserve the controller's independent protections.
+title: Well Pump - PID50 Monitoring
+icon: mdi:water-well
+path: well-pump
+type: sections
+sections:
+  - type: grid
+    cards:
+      - type: heading
+        heading: Live Status
+      - type: gauge
+        entity: sensor.pentek_intellidrive_pid50_pressure
+        name: System Pressure
+        min: 0
+        max: 100
+        needle: true
+        severity:
+          green: 50
+          yellow: 40
+          red: 80
+      - type: gauge
+        entity: sensor.pid50_transducer_percent
+        name: Pressure Transducer
+        min: 0
+        max: 100
+        needle: true
+      - type: gauge
+        entity: sensor.well_pump_estimated_gpm
+        name: Estimated Flow
+        min: 0
+        max: 25
+        needle: true
+        severity:
+          green: 0
+          yellow: 15
+          red: 20
+      - type: entities
+        title: Pump Overview
+        show_header_toggle: false
+        state_color: true
+        entities:
+          - entity: sensor.pid50_pump_status
+            name: Status
+          - entity: sensor.pentek_intellidrive_pid50_run_mode
+            name: Run Mode
+          - entity: sensor.pentek_intellidrive_pid50_operation_state
+            name: Operation State
+          - entity: binary_sensor.pentek_intellidrive_pid50_running
+            name: Running
+          - entity: binary_sensor.pentek_intellidrive_pid50_sleeping
+            name: Sleeping
+          - entity: binary_sensor.pentek_intellidrive_pid50_fault_active
+            name: Fault Active
+          - entity: sensor.pentek_intellidrive_pid50_fault_code
+            name: Fault Code
+          - entity: sensor.pentek_intellidrive_pid50_frequency
+            name: Frequency
+          - entity: sensor.pentek_intellidrive_pid50_pressure
+            name: Pressure
+          - entity: sensor.pentek_intellidrive_pid50_pressure_setpoint
+            name: Setpoint
+          - entity: sensor.pid50_daily_runtime
+            name: Daily Runtime
+  - type: grid
+    cards:
+      - type: heading
+        heading: Motor & Electrical
+      - type: entities
+        title: Electrical
+        show_header_toggle: false
+        state_color: true
+        entities:
+          - entity: sensor.pentek_intellidrive_pid50_power
+            name: Power
+          - entity: sensor.pentek_intellidrive_pid50_phase_a_current
+            name: Phase A Current
+          - entity: sensor.pentek_intellidrive_pid50_phase_b_current
+            name: Phase B Current
+          - entity: sensor.pentek_intellidrive_pid50_phase_c_current
+            name: Phase C Current
+          - entity: sensor.pentek_intellidrive_pid50_phase_voltage
+            name: Phase Voltage
+          - entity: sensor.pentek_intellidrive_pid50_supply_voltage
+            name: Supply Voltage
+          - entity: sensor.pentek_intellidrive_pid50_igbt_temperature
+            name: IGBT Temperature
+          - entity: sensor.pentek_intellidrive_pid50_actual_speed
+            name: Actual Speed
+          - entity: sensor.pentek_intellidrive_pid50_frequency
+            name: Frequency
+      - type: entities
+        title: Pump Energy
+        show_header_toggle: false
+        entities:
+          - entity: sensor.pid50_pump_energy
+            name: Total Since Tracking Started
+          - entity: sensor.pid50_pump_energy_daily
+            name: Today
+          - entity: sensor.pid50_pump_energy_monthly
+            name: This Month
+      - type: entities
+        title: Motor Configuration
+        show_header_toggle: false
+        entities:
+          - entity: sensor.pentek_intellidrive_pid50_motor_type
+            name: Motor Type
+          - entity: sensor.pentek_intellidrive_pid50_motor_sf_amps
+            name: Service Factor Amps
+          - entity: sensor.pentek_intellidrive_pid50_motor_above_ground
+            name: Above Ground (0=Sub, 1=Above)
+          - entity: sensor.pentek_intellidrive_pid50_ground_fault_limit
+            name: Ground Fault Limit
+          - entity: sensor.pentek_intellidrive_pid50_unit_number
+            name: Unit Number
+          - entity: sensor.pentek_intellidrive_pid50_ramp_up_time
+            name: Ramp Up Time
+          - entity: sensor.pentek_intellidrive_pid50_ramp_down_time
+            name: Ramp Down Time
+  - type: grid
+    cards:
+      - type: heading
+        heading: Diagnostics
+      - type: markdown
+        content: >
+          ## PID50 Summary
+
+          | Parameter | Value |
+
+          |:----------|:------|
+
+          | **Minutes Since Last Run** | {% if
+          states('binary_sensor.pentek_intellidrive_pid50_running') == 'on' %}Running now{% else
+          %}{{ ((now() -
+          states.binary_sensor.pentek_intellidrive_pid50_running.last_changed).total_seconds() / 60)
+          | round(1) }} min{% endif %} |
+
+          | **Status** | {{ states('sensor.pid50_pump_status') }} |
+
+          | **Run Mode** | {{ states('sensor.pentek_intellidrive_pid50_run_mode') }} |
+
+          | **Op State** | {{
+          states('sensor.pentek_intellidrive_pid50_operation_state') }} |
+
+          | **Running** | {{ states('binary_sensor.pentek_intellidrive_pid50_running') }} |
+
+          | **Sleeping** | {{ states('binary_sensor.pentek_intellidrive_pid50_sleeping') }} |
+
+          | **Fault Active** | {{ states('binary_sensor.pentek_intellidrive_pid50_fault_active') }}
+          |
+
+          | **Fault Code** | {{
+          states('sensor.pentek_intellidrive_pid50_fault_code') }} |
+
+          | **Frequency** | {{
+          states('sensor.pentek_intellidrive_pid50_frequency') }} Hz |
+
+          | **Transducer** | {{ states('sensor.pid50_transducer_percent') }} % |
+
+          | **Pressure** | {{
+          states('sensor.pentek_intellidrive_pid50_pressure') }} PSI |
+
+          | **Setpoint** | {{
+          states('sensor.pentek_intellidrive_pid50_pressure_setpoint') }} PSI |
+
+          | **Deviation** | {{ states('sensor.pid50_pressure_deviation') }} PSI
+          |
+
+          | **Power** | {{ states('sensor.pentek_intellidrive_pid50_power') }} W
+          |
+
+          | **Pump Energy** | {{ states('sensor.pid50_pump_energy') }} kWh |
+
+          | **Energy Today** | {{ states('sensor.pid50_pump_energy_daily') }}
+          kWh |
+
+          | **Energy This Month** | {{
+          states('sensor.pid50_pump_energy_monthly') }} kWh |
+
+          | **Phase A** | {{
+          states('sensor.pentek_intellidrive_pid50_phase_a_current') }} A |
+
+          | **Phase B** | {{
+          states('sensor.pentek_intellidrive_pid50_phase_b_current') }} A |
+
+          | **Phase C** | {{
+          states('sensor.pentek_intellidrive_pid50_phase_c_current') }} A |
+
+          | **Supply V** | {{
+          states('sensor.pentek_intellidrive_pid50_supply_voltage') }} V |
+
+          | **IGBT Temp** | {{
+          states('sensor.pentek_intellidrive_pid50_igbt_temperature') }} °F |
+
+          | **Daily Runtime** | {{ states('sensor.pid50_daily_runtime') }} h |
+
+          | **P Gain** | {{ states('sensor.pentek_intellidrive_pid50_p_gain') }}
+          |
+
+          | **T Integral** | {{
+          states('sensor.pentek_intellidrive_pid50_t_integral') }} ms |
+
+          | **Motor Type** | {{ states('sensor.pentek_intellidrive_pid50_motor_type') }} |
+
+          | **SF Amps** | {{
+          states('sensor.pentek_intellidrive_pid50_motor_sf_amps')
+          }} A |
+
+          | **Unit #** | {{
+          states('sensor.pentek_intellidrive_pid50_unit_number') }} |
+  - type: grid
+    cards:
+      - type: heading
+        heading: Pressure Trends
+      - type: history-graph
+        title: Pressure vs Setpoint (24h)
+        hours_to_show: 24
+        refresh_interval: 30
+        entities:
+          - entity: sensor.pentek_intellidrive_pid50_pressure
+            name: Pressure
+          - entity: sensor.pentek_intellidrive_pid50_pressure_setpoint
+            name: Setpoint
+      - type: history-graph
+        title: Frequency (24h)
+        hours_to_show: 24
+        refresh_interval: 30
+        entities:
+          - entity: sensor.pentek_intellidrive_pid50_frequency
+            name: Frequency
+      - type: statistics-graph
+        title: Pressure Statistics (7 Days)
+        days_to_show: 7
+        chart_type: line
+        period: hour
+        stat_types:
+          - mean
+          - min
+          - max
+        entities:
+          - entity: sensor.pentek_intellidrive_pid50_pressure
+            name: Pressure
+  - type: grid
+    cards:
+      - type: heading
+        heading: Electrical Trends
+      - type: history-graph
+        title: Motor Power (24h)
+        hours_to_show: 24
+        refresh_interval: 30
+        entities:
+          - entity: sensor.pentek_intellidrive_pid50_power
+            name: Power (W)
+      - type: history-graph
+        title: Phase Currents (24h)
+        hours_to_show: 24
+        refresh_interval: 30
+        entities:
+          - entity: sensor.pentek_intellidrive_pid50_phase_a_current
+            name: Phase A
+          - entity: sensor.pentek_intellidrive_pid50_phase_b_current
+            name: Phase B
+          - entity: sensor.pentek_intellidrive_pid50_phase_c_current
+            name: Phase C
+      - type: history-graph
+        title: Supply Voltage & IGBT Temp (24h)
+        hours_to_show: 24
+        refresh_interval: 30
+        entities:
+          - entity: sensor.pentek_intellidrive_pid50_supply_voltage
+            name: Supply Voltage
+          - entity: sensor.pentek_intellidrive_pid50_igbt_temperature
+            name: IGBT Temp
+  - type: grid
+    cards:
+      - type: heading
+        heading: Runtime & Faults
+      - type: history-graph
+        title: Status Signals (24h)
+        hours_to_show: 24
+        refresh_interval: 30
+        entities:
+          - entity: binary_sensor.pentek_intellidrive_pid50_running
+            name: Running
+          - entity: binary_sensor.pentek_intellidrive_pid50_sleeping
+            name: Sleeping
+          - entity: binary_sensor.pentek_intellidrive_pid50_fault_active
+            name: Fault Active
+      - type: history-graph
+        title: Operation State (24h)
+        hours_to_show: 24
+        refresh_interval: 30
+        entities:
+          - entity: sensor.pentek_intellidrive_pid50_operation_state
+            name: Op State
+  - type: grid
+    cards:
+      - type: heading
+        heading: PID Tuning
+      - type: entities
+        title: PID Parameters
+        show_header_toggle: false
+        entities:
+          - entity: sensor.pentek_intellidrive_pid50_p_gain
+            name: P Gain
+          - entity: sensor.pentek_intellidrive_pid50_t_integral
+            name: T Integral
+          - entity: sensor.pentek_intellidrive_pid50_t_derivative
+            name: T Derivative
+          - entity: sensor.pentek_intellidrive_pid50_derivative_limit
+            name: Derivative Limit
+  - type: grid
+    cards:
+      - type: heading
+        heading: Setpoints & Limits
+      - type: entities
+        title: Pressure Setpoints
+        show_header_toggle: false
+        entities:
+          - entity: sensor.pentek_intellidrive_pid50_pressure_setpoint
+            name: Internal Setpoint
+          - entity: sensor.pentek_intellidrive_pid50_setpoint_external
+            name: External Setpoint
+          - entity: sensor.pentek_intellidrive_pid50_setpoint_overpressure
+            name: Overpressure Setpoint
+          - entity: sensor.pentek_intellidrive_pid50_transducer_max
+            name: Transducer Max
+          - entity: sensor.pentek_intellidrive_pid50_pressure_unit
+            name: Pressure Unit (0=PSI, 1=kPa)
+      - type: entities
+        title: Frequency Limits
+        show_header_toggle: false
+        entities:
+          - entity: sensor.pentek_intellidrive_pid50_frequency_max
+            name: Frequency Max
+          - entity: sensor.pentek_intellidrive_pid50_frequency_min
+            name: Frequency Min
+          - entity: sensor.pentek_intellidrive_pid50_pumpout_speed
+            name: Pumpout Speed
+  - type: grid
+    cards:
+      - type: heading
+        heading: Protection Settings
+      - type: entities
+        title: Dry-Run Protection
+        show_header_toggle: false
+        entities:
+          - entity: sensor.pentek_intellidrive_pid50_dry_run_detection_time
+            name: Detection Time
+          - entity: sensor.pentek_intellidrive_pid50_dry_run_reset_limit
+            name: Reset Limit
+          - entity: sensor.pentek_intellidrive_pid50_dry_run_reset_delay
+            name: Reset Delay
+          - entity: sensor.pentek_intellidrive_pid50_dry_run_fill_time
+            name: Fill Time
+          - entity: sensor.pentek_intellidrive_pid50_dry_run_sensitivity
+            name: Sensitivity
+      - type: entities
+        title: Sleep / Wake
+        show_header_toggle: false
+        entities:
+          - entity: sensor.pentek_intellidrive_pid50_sleep_wakeup_diff
+            name: Wakeup Pressure Diff
+          - entity: sensor.pentek_intellidrive_pid50_sleep_wakeup_delay
+            name: Wakeup Delay
+          - entity: sensor.pentek_intellidrive_pid50_sleep_boost_diff
+            name: Boost Pressure Diff
+          - entity: sensor.pentek_intellidrive_pid50_sleep_boost_delay
+            name: Boost Delay
+      - type: entities
+        title: Pipe Break
+        show_header_toggle: false
+        entities:
+          - entity: sensor.pentek_intellidrive_pid50_pipe_break_enabled
+            name: Enabled (0=No, 1=Yes)
+          - entity: sensor.pentek_intellidrive_pid50_pipe_break_hours
+            name: Hours
+  - type: grid
+    cards:
+      - type: heading
+        heading: I/O Status
+      - type: entities
+        title: Digital Inputs / Output
+        show_header_toggle: false
+        state_color: true
+        entities:
+          - entity: sensor.pentek_intellidrive_pid50_io_input_1_active
+            name: Input 1 Active
+          - entity: sensor.pentek_intellidrive_pid50_io_input_1_function
+            name: Input 1 Function
+          - entity: sensor.pentek_intellidrive_pid50_io_input_2_active
+            name: Input 2 Active
+          - entity: sensor.pentek_intellidrive_pid50_io_input_2_function
+            name: Input 2 Function
+          - entity: sensor.pentek_intellidrive_pid50_io_output_active
+            name: Output Active
+          - entity: sensor.pentek_intellidrive_pid50_io_output_function
+            name: Output Function
+cards: []
+

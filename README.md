@@ -95,8 +95,30 @@ Enum sensors expose named states such as `sleeping` and `fault_recovery`, plus
 the numeric source in a `raw_value` attribute. A nonzero fault code can be
 historical; use **Fault active** to detect an active fault or fault recovery.
 
-An [example dashboard](examples/dashboard.yaml) is included. Its entity IDs are
-placeholders; replace them with the IDs created in your installation.
+## Dashboard examples
+
+Two dashboard view examples are included:
+
+- [Starter dashboard](examples/dashboard.yaml) provides a compact status and
+  electrical overview using only entities created by this integration.
+- [Full well-pump dashboard](examples/full-dashboard.yaml) is adapted from the
+  reference installation used for physical validation. It adds live gauges,
+  motor and electrical data, diagnostics, history graphs, PID settings,
+  protection settings, and I/O status.
+
+The example entity IDs are placeholders. Replace them with the IDs created in
+your installation, and enable any disabled-by-default diagnostic entities used
+by the selected dashboard. The full dashboard also references optional local
+helper sensors for estimated flow, runtime, energy accumulation, and calculated
+values. These helpers are listed at the top of the YAML and are not created by
+this integration; remove their cards or provide equivalent helpers locally.
+
+Gauge ranges, severity colors, and values visible in these screenshots describe
+one reference installation. They are examples, not recommended operating limits.
+
+![Well-pump dashboard overview](docs/images/well-pump-dashboard-overview.png)
+
+![Well-pump dashboard trends and diagnostics](docs/images/well-pump-dashboard-trends.png)
 
 ## Safety
 

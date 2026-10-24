@@ -91,6 +91,47 @@ def test_slow_drip_gateway_hits_one_overall_deadline(
     assert fake.delivered <= 3
 
 
+class SendTimingSocket(FakeSocket):
+    """Records the socket timeout in force when the request is sent."""
+
+    def sendall(self, frame: bytes) -> None:
+        self.timeout_at_send = self.timeout
+        super().sendall(frame)
+
+
+def _slow_connect(monkeypatch, fake, clock, seconds):
+    def connect(*args, **kwargs):
+        clock[0] += seconds  # the TCP handshake used part of the budget
+        return fake
+
+    monkeypatch.setattr("socket.create_connection", connect)
+    monkeypatch.setattr(
+        "custom_components.pentek_intellidrive.api.time.monotonic", lambda: clock[0]
+    )
+
+
+def test_send_gets_only_the_time_left_after_connecting(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    clock = [1000.0]
+    fake = SendTimingSocket()
+    _slow_connect(monkeypatch, fake, clock, 0.75)
+    assert _client().read_holding_registers(100, 2) == [10, 20]  # 1 s timeout
+    assert fake.timeout_at_send == pytest.approx(0.25)
+
+
+def test_connect_that_uses_the_whole_budget_sends_nothing(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    clock = [1000.0]
+    fake = SendTimingSocket()
+    _slow_connect(monkeypatch, fake, clock, 1.5)
+    with pytest.raises(PentekConnectionError) as err:
+        _client().read_holding_registers(100, 2)
+    assert "timed out" in str(err.value.__cause__)
+    assert not hasattr(fake, "timeout_at_send")
+
+
 class BadLengthSocket(FakeSocket):
     """Announces a 5,000-byte body in an otherwise valid header."""
 

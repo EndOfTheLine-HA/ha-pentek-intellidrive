@@ -48,16 +48,27 @@ class PentekModbusClient:
                 + pdu
             )
             try:
+                # One deadline for the whole transaction: a per-recv timeout
+                # alone lets a gateway that drips a byte every few seconds hold
+                # the read (and the executor thread) for hours.
+                deadline = time.monotonic() + self.timeout
                 with socket.create_connection(
                     (self.host, self.port), timeout=self.timeout
                 ) as sock:
                     sock.settimeout(self.timeout)
                     sock.sendall(frame)
-                    header = self._recv_exact(sock, 7)
+                    header = self._recv_exact(sock, 7, deadline)
                     reply_id, protocol_id, length, unit_id = struct.unpack(
                         ">HHHB", header
                     )
-                    body = self._recv_exact(sock, length - 1)
+                    # Only a full register reply (unit, function, byte count,
+                    # data) or a 3-byte exception reply is valid. Anything else
+                    # is rejected before reading the body it announces.
+                    if length not in (3, 3 + count * 2):
+                        raise PentekConnectionError(
+                            "gateway announced an invalid reply length"
+                        )
+                    body = self._recv_exact(sock, length - 1, deadline)
 
                 if reply_id != transaction_id:
                     raise PentekConnectionError(
@@ -104,10 +115,14 @@ class PentekModbusClient:
         return self.read_holding_registers(221, 1)[0]
 
     @staticmethod
-    def _recv_exact(sock: socket.socket, count: int) -> bytes:
-        """Receive exactly count bytes or raise."""
+    def _recv_exact(sock: socket.socket, count: int, deadline: float) -> bytes:
+        """Receive exactly count bytes before the deadline, or raise."""
         data = bytearray()
         while len(data) < count:
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                raise PentekConnectionError("gateway reply timed out")
+            sock.settimeout(remaining)
             chunk = sock.recv(count - len(data))
             if not chunk:
                 raise PentekConnectionError("gateway closed the connection")

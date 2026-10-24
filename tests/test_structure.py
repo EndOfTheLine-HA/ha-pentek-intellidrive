@@ -14,7 +14,7 @@ def test_metadata() -> None:
     hacs = json.loads((ROOT / "hacs.json").read_text(encoding="utf-8"))
     assert manifest["domain"] == "pentek_intellidrive"
     assert manifest["config_flow"] is True
-    assert manifest["version"] == "0.1.0"
+    assert manifest["version"] == "0.1.1"
     assert hacs["homeassistant"] == "2026.10.2"
 
 

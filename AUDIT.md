@@ -36,9 +36,34 @@ responses, read-only package surfaces, translations, migration guidance, and
 Home Assistant lifecycle behavior. CI also runs Ruff, HACS validation, and
 Hassfest.
 
-Not every register or operating transition has been independently checked against
-every controller revision. Real fault, fault-recovery, over-pressure, dry-run,
-extended-soak, and gateway-loss scenarios are not claimed as validated. Other
+## Physical validation
+
+Physical validation of the supported read-only scope was completed on October
+23, 2026, using a
+[Pentek PID50 IntelliDrive Variable Frequency Drive](https://rcworst.com/products/pentek-pid50-intellidrive-variable-frequency-drive)
+and a
+[Waveshare RS485 to WiFi/Ethernet Serial Server and Modbus MQTT Gateway](https://www.amazon.com/dp/B0B4K1WN58):
+
+- Home Assistant pressure, setpoint, frequency, power, current, voltage, and
+  operating-state readings were compared with the physical controller during
+  idle/sleeping and normal running operation. The displayed
+  values and state transitions matched within their display and polling
+  resolution.
+- Natural boosting, maintaining, sleeping, and wake transitions were observed.
+  The derived Running and Sleeping binary sensors followed the controller state,
+  and Fault active remained off during fault-free operation.
+- A 48-hour recorder window contained normal operating cycles with no recorded
+  unavailable or unknown PID50 entity states. The window included a Home
+  Assistant restart and therefore is not a claim of uninterrupted uptime.
+- Gateway loss was simulated by temporarily making only the Modbus gateway
+  unreachable from Home Assistant. All 52 entities became unavailable, all 52
+  recovered automatically in approximately 52 seconds after connectivity was
+  restored, and no Home Assistant restart was required. The physical controller
+  continued operating normally and reported no fault.
+
+Not every register has been independently checked against every controller
+revision. Real fault, fault-recovery, over-pressure, dry-run, and electrical-fault
+conditions were deliberately not induced. Longer-duration soak testing, other
 drive models, firmware revisions, and gateways remain unverified.
 
 This is community monitoring software, not a safety system. Keep the drive's

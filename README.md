@@ -1,5 +1,23 @@
 # Pentek IntelliDrive for Home Assistant
 
+> [!WARNING]
+> **Tested hardware and safety limits:** Physical validation was performed only
+> on the maintainers' local installation using a
+> [Pentek PID50 IntelliDrive Variable Frequency Drive](https://rcworst.com/products/pentek-pid50-intellidrive-variable-frequency-drive)
+> and a
+> [Waveshare RS485 to WiFi/Ethernet Serial Server and Modbus MQTT Gateway](https://www.amazon.com/dp/B0B4K1WN58).
+> These results do not guarantee compatibility or safe operation with another
+> drive, firmware revision, gateway, wiring arrangement, pump system, or network.
+> Verify every value and state against the physical controller before relying on
+> the integration. Use qualified electrical and pump-system professionals,
+> de-energize and lock out equipment before wiring, preserve all independent
+> pressure, dry-run, motor, and electrical protections, back up controller
+> settings, and test while physically present. Never use Home Assistant as a
+> safety controller. This project is provided as-is, without warranty; you assume
+> all risk and responsibility for installation and use. The project authors and
+> maintainers are not responsible for equipment damage, property damage, injury,
+> downtime, data loss, or other consequences arising from its use.
+
 A local, read-only Home Assistant integration for the Pentek IntelliDrive PID50
 variable-frequency pump controller through a Modbus TCP-to-RS-485 gateway.
 
@@ -24,8 +42,8 @@ write commands, switches, numbers, or services that can change pump behavior.
 
 This integration has been developed against:
 
-- Pentek IntelliDrive PID50
-- a Modbus TCP-to-RS-485 gateway
+- [Pentek IntelliDrive PID50](https://rcworst.com/products/pentek-pid50-intellidrive-variable-frequency-drive)
+- [Waveshare RS485 to WiFi/Ethernet Serial Server and Modbus MQTT Gateway](https://www.amazon.com/dp/B0B4K1WN58)
 - Modbus unit ID `2`
 - TCP port `502`
 - big-endian holding registers (function code 3)
@@ -95,10 +113,17 @@ and clear documentation of controller-specific risks.
 Version 0.1.0 is an initial, read-only release. Automated protocol, packaging,
 migration, and Home Assistant lifecycle tests cover the supported behavior.
 
-This is not validation of every register against the controller display, every
-operating mode, real fault events, long-term gateway recovery, or other hardware.
-No controller settings are written. See [AUDIT.md](AUDIT.md) for evidence and remaining validation limits,
-and the [v0.1.0 release notes](docs/releases/v0.1.0.md) for the release scope.
+Post-release hardware validation on the reference PID50 installation was
+completed on October 23, 2026. Controller-display comparisons passed during
+idle/sleeping and normal running operation, natural operating transitions were
+observed, a 48-hour recorder window was reviewed, and a gateway-loss test marked
+all entities unavailable before they recovered automatically without restarting
+Home Assistant. The physical controller continued operating normally.
+
+This does not validate every register, controller revision, or intentionally
+induced fault condition. No controller settings are written. See
+[AUDIT.md](AUDIT.md) for the evidence and remaining validation limits, and the
+[v0.1.0 release notes](docs/releases/v0.1.0.md) for the release scope.
 
 ## License
 

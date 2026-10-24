@@ -18,6 +18,12 @@
 > maintainers are not responsible for equipment damage, property damage, injury,
 > downtime, data loss, or other consequences arising from its use.
 
+<p align="center">
+  <img src="docs/images/pid50-network-monitor-logo.png"
+       alt="Well pump connected to a network monitoring display"
+       width="420">
+</p>
+
 A local, read-only Home Assistant integration for the Pentek IntelliDrive PID50
 variable-frequency pump controller through a Modbus TCP-to-RS-485 gateway.
 

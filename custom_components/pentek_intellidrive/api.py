@@ -48,14 +48,14 @@ class PentekModbusClient:
                 + pdu
             )
             try:
-                # One deadline for the whole transaction: a per-recv timeout
-                # alone lets a gateway that drips a byte every few seconds hold
-                # the read (and the executor thread) for hours.
+                # One deadline for the whole transaction (connect, send and
+                # receive): a per-call timeout alone lets a slow gateway hold
+                # the read, and the executor thread, far longer than intended.
                 deadline = time.monotonic() + self.timeout
                 with socket.create_connection(
                     (self.host, self.port), timeout=self.timeout
                 ) as sock:
-                    sock.settimeout(self.timeout)
+                    sock.settimeout(self._remaining(deadline))
                     sock.sendall(frame)
                     header = self._recv_exact(sock, 7, deadline)
                     reply_id, protocol_id, length, unit_id = struct.unpack(
@@ -119,12 +119,17 @@ class PentekModbusClient:
         """Receive exactly count bytes before the deadline, or raise."""
         data = bytearray()
         while len(data) < count:
-            remaining = deadline - time.monotonic()
-            if remaining <= 0:
-                raise PentekConnectionError("gateway reply timed out")
-            sock.settimeout(remaining)
+            sock.settimeout(PentekModbusClient._remaining(deadline))
             chunk = sock.recv(count - len(data))
             if not chunk:
                 raise PentekConnectionError("gateway closed the connection")
             data.extend(chunk)
         return bytes(data)
+
+    @staticmethod
+    def _remaining(deadline: float) -> float:
+        """Seconds left in the transaction, or raise once it has run out."""
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            raise PentekConnectionError("gateway transaction timed out")
+        return remaining

@@ -58,17 +58,20 @@ Other IntelliDrive models or register-map revisions are not yet confirmed.
 
 ## Install with HACS
 
-1. Open HACS.
-2. Add `https://github.com/EndOfTheLine-HA/ha-pentek-intellidrive` as a custom
-   integration repository.
-3. Install **Pentek IntelliDrive**.
-4. Restart Home Assistant.
-5. Go to **Settings → Devices & services → Add integration** and search for
-   **Pentek IntelliDrive**.
-6. Enter the gateway host, port, unit ID, and polling interval.
+Pentek IntelliDrive is in the default HACS catalog.
 
-Home Assistant **2026.10.2 or newer** is required. HACS custom-repository
-installation is supported; inclusion in the default HACS catalog is separate.
+1. Open HACS and search for **Pentek IntelliDrive**.
+2. Select it, then choose **Download**.
+3. Restart Home Assistant.
+4. Go to **Settings → Devices & services → Add integration** and search for
+   **Pentek IntelliDrive**.
+5. Enter the gateway host, port, unit ID, and polling interval.
+
+If it does not appear in HACS yet (a new default listing can take several hours to
+show up), add `https://github.com/EndOfTheLine-HA/ha-pentek-intellidrive` as a custom
+repository of type **Integration** and download it from there.
+
+Home Assistant **2026.10.2 or newer** is required.
 
 ## Migrating from Home Assistant Modbus YAML
 

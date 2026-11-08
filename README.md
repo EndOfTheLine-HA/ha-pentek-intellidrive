@@ -46,12 +46,21 @@ write commands, switches, numbers, or services that can change pump behavior.
 
 ## Hardware and protocol
 
-This integration has been developed against:
+The reference installation used for development uses:
 
 - [Pentek IntelliDrive PID50](https://rcworst.com/products/pentek-pid50-intellidrive-variable-frequency-drive)
 - [Waveshare RS485 to WiFi/Ethernet Serial Server and Modbus MQTT Gateway](https://www.amazon.com/dp/B0B4K1WN58)
-- Modbus unit ID `2`
-- TCP port `502`
+
+The Waveshare gateway is the reference hardware the integration was validated
+with, not a required model. The integration speaks standard Modbus TCP, so it
+needs a gateway that converts Modbus TCP to Modbus RTU on the drive's RS-485
+port. A plain transparent serial-to-TCP mode is not enough. Other gateways have
+not been tested.
+
+Protocol:
+
+- Modbus TCP, default port `502` (configurable during setup)
+- Modbus unit ID `2` by default (configurable during setup)
 - big-endian holding registers (function code 3)
 
 Other IntelliDrive models or register-map revisions are not yet confirmed.
